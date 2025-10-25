@@ -8,7 +8,7 @@ function ShopItem(props)
     
     const lookup = {//this look up statement brought to you by ChatGPT when cleaning up an if statement
         Yes: inPantry,
-        No: low,
+        Low: low,
         };
 
     return lookup[props.isInPantry] ?? pleaseBuy;//also this return syntax with the look up

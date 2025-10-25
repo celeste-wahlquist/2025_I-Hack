@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types';
-import ShopItem from './ShopItem'
+import ShopItem from './ShopItem';
+import {createUser, getUser} from './firebase_stuff/Data';
+
+
 // props = list of items to buy with weather they are in pantry or not
 // shop list should come in as name / value
 function ShoppingList(){
@@ -18,6 +21,7 @@ function ShoppingList(){
                 <h2>Shopping List</h2>
                 <hr />
             </div>
+            <button onClick={createUser}>This button!</button>
             <div>
                 <ul>                  
                     {shopList}
