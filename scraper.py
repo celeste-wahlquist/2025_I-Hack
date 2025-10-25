@@ -6,10 +6,14 @@ from time import sleep
 import openpyxl
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
+import urllib.parse
 
 TARGET_WEBSITES = ["https://www.allrecipes.com/recipe/270750/simple-baked-potato/", "https://www.allrecipes.com/scarborough-fair-roasted-vegetables-recipe-11763940", "https://www.allrecipes.com/cheesy-cauliflower-cakes-recipe-11803145", "https://www.allrecipes.com/4-ingredient-egg-avocado-toast-recipe-11763246"] # "https://www.recipes.com"
-XPATH_INDEX = {"total-time": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[3]/div[2]', "ingredients": '//*[@id="mm-recipes-structured-ingredients_1-0"]/ul/li', "servings": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[4]/div[2]', "meal-category":'//*[@id="mntl-breadcrumbs__item_2-0"]'}
-COLUMNS = ["link", "meal-category", "ingredients", "total-time", "servings"]
+XPATH_INDEX = {"total-time": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[3]/div[2]', "ingredients": '//*[@id="mm-recipes-structured-ingredients_1-0"]/ul/li', "servings": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[4]/div[2]', "meal-category":'//*[@id="mntl-breadcrumbs__item_2-0"]', "cook-time": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[2]/div[2]', "prep-time": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[1]/div[2]'}
+COLUMNS = ["link", "meal-category", "ingredients", "total-time", "servings", "cook-time", "prep-time"]
+SITEMAPS = ["https://www.allrecipes.com/sitemap_1.xml", "https://www.allrecipes.com/sitemap_2.xml", "https://www.allrecipes.com/sitemap_3.xml", "https://www.allrecipes.com/sitemap_4.xml"]
+
 
 ROW_IDENTIFIER = "row"
 # TODO: Get all needed data {url, name, category, rating, ingredients, prep_time, cook_time, ready_in_time, calories}
@@ -60,6 +64,29 @@ def get_elements_by_xpath(xpath):
 
 df = pd.DataFrame(columns=COLUMNS)
 
+def get_target_urls(sitemap_url):
+    driver.get(sitemap_url)
+
+    page_source = driver.page_source
+
+    soup = BeautifulSoup(page_source, "xml")
+
+    # print(soup.prettify())
+    urls = soup.find_all("loc")
+
+    # print(urls)
+    urls_list = []
+    for url in urls:
+        clean_url = str(url.contents)[2:-3] # 2:-3 removes brackets and single quotes.
+        parsed = urllib.parse.urlparse(str(clean_url))
+        # special_url =f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+        # print(parsed.path[0:7])
+        if (parsed.path[0:8] == "/recipe/"):
+            print(clean_url)
+            urls_list.append(clean_url)
+    return urls_list
+
+
 # get_url(TARGET_WEBSITES[0])
 # element = get_elements_by_xpath(XPATH_INDEX["ingredients"]) # Returns a dictionary containing a list of data.
 # print(element)
@@ -100,8 +127,11 @@ def fill_blank_df_fields(df):
     return df
 
 # Full info on meal xpath: //*[@id="mm-recipes-details_1-0"]/div[1]
-
-for url in TARGET_WEBSITES:
+target_websites = get_target_urls(SITEMAPS[0])
+# driver.close()
+if (len(target_websites) > 20):
+    target_websites = target_websites[0:20]
+for url in target_websites:
     # for key in XPATH_INDEX:
     sleep(2)
     get_url(url)
@@ -110,9 +140,11 @@ for url in TARGET_WEBSITES:
     # details_dict = calculate_details('//*[@id="mm-recipes-details_1-0"]/div[1]')
     ingredients_dict = get_elements_by_xpath(XPATH_INDEX["ingredients"])
     total_time_dict = get_elements_by_xpath(XPATH_INDEX["total-time"])
+    cook_time_dict = get_elements_by_xpath(XPATH_INDEX["cook-time"])
+    prep_time_dict = get_elements_by_xpath(XPATH_INDEX["prep-time"])
     serving_dict = get_elements_by_xpath(XPATH_INDEX["servings"])
     meal_category = get_elements_by_xpath(XPATH_INDEX["meal-category"]) 
-    temp_df = pd.DataFrame({"link":url, "meal-category":meal_category, "ingredients":ingredients_dict, "total-time": total_time_dict, "servings":serving_dict}) #TODO: Clean up the ingredients list. There is currently a mismatch in columns filled here and the expected columns.
+    temp_df = pd.DataFrame({"link":url, "meal-category":meal_category, "ingredients":ingredients_dict, "total-time": total_time_dict, "servings":serving_dict, "cook-time": cook_time_dict, "prep-time": prep_time_dict}) #TODO: Clean up the ingredients list. There is currently a mismatch in columns filled here and the expected columns.
     temp_df = fill_blank_df_fields(temp_df)
     df = pd.concat([df, temp_df], ignore_index=True)
 
@@ -129,4 +161,5 @@ df.to_csv("./output.csv")
 # print(df)
 # This input keeps the page alive
 # input()
+driver.close()
 driver.quit()
