@@ -4,11 +4,13 @@ from selenium.webdriver.common.by import By
 import pandas as pd
 from time import sleep
 import openpyxl
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 TARGET_WEBSITES = ["https://www.allrecipes.com/recipe/270750/simple-baked-potato/", "https://www.allrecipes.com/scarborough-fair-roasted-vegetables-recipe-11763940"] # "https://www.recipes.com"
 
 # Create the driver for the selenium browser
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 # //*[@id="mntl-taxonomy-nodes__list_1-0"]
 # The above is the xml path to the list of different dinner genres
@@ -50,7 +52,7 @@ for url in TARGET_WEBSITES:
     sleep(2)
     get_url(url)
     ingredients_dict = get_ingredients('//*[@id="mm-recipes-structured-ingredients_1-0"]/ul/li')
-    temp_df = pd.DataFrame({"link":TARGET_WEBSITES[0], "meal-category":"side-dish", "ingredients":ingredients_dict}) #TODO: Clean up the ingredients list.
+    temp_df = pd.DataFrame({"link":url, "meal-category":"side-dish", "ingredients":ingredients_dict}) #TODO: Clean up the ingredients list.
     df = pd.concat([df, temp_df])
 
 print(df)
