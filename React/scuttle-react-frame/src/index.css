@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#heroImage {
+    width: 100vw;
+    image-rendering: pixelated;
+}
