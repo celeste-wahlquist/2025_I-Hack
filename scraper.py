@@ -54,8 +54,7 @@ for url in TARGET_WEBSITES:
     df = pd.concat([df, temp_df])
 
 print(df)
-with pd.ExcelWriter("./output.xlsx") as writer:
-    df.to_excel(writer)
+df.to_csv("./output.csv")
 
 # temp_df = pd.DataFrame([{"link":TARGET_WEBSITES[0], "meal_category":"side-dish", "ingredients": "test string"}])
 # df["ingredients"] = zip(ingredients_list)
