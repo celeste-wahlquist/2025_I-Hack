@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import ShoppingList from './ShoppingList';
-
+import foodwave from './images/foodwavecropped.png';
 
 function App() {
   return (
@@ -9,6 +9,8 @@ function App() {
       <header className="App-header">
         <ShoppingList />
         <p>Hi</p>
+        
+        <img src={foodwave} alt="foodwave" id="heroImage" />
       </header>
     </div>
   );
