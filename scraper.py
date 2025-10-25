@@ -3,6 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import pandas as pd
 from time import sleep
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import openpyxl
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -135,7 +137,8 @@ SITEMAPS = ["https://www.allrecipes.com/sitemap_1.xml", "https://www.allrecipes.
 ROW_IDENTIFIER = "row"
 
 # Create the driver for the selenium browser
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+# driver = webdriver.Firefox()
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install())service=Service(ChromeDriverManager().install()))
 
 df = pd.DataFrame(columns=COLUMNS)
 
