@@ -7,18 +7,19 @@ import openpyxl
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-TARGET_WEBSITES = ["https://www.allrecipes.com/recipe/270750/simple-baked-potato/", "https://www.allrecipes.com/scarborough-fair-roasted-vegetables-recipe-11763940"] # "https://www.recipes.com"
+TARGET_WEBSITES = ["https://www.allrecipes.com/recipe/270750/simple-baked-potato/", "https://www.allrecipes.com/scarborough-fair-roasted-vegetables-recipe-11763940", "https://www.allrecipes.com/cheesy-cauliflower-cakes-recipe-11803145"] # "https://www.recipes.com"
 XPATH_INDEX = {"total-time": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[3]/div[2]', "ingredients": '//*[@id="mm-recipes-structured-ingredients_1-0"]/ul/li', "servings": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[4]/div[2]'}
-
+COLUMNS = ["link", "meal-category", "ingredients", "total-time", "servings"]
 # TODO: Get all needed data {url, name, category, rating, ingredients, prep_time, cook_time, ready_in_time, calories}
 
 # Create the driver for the selenium browser
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
+# TODO: Make dynamic webpage crawling within target websites base url.
 # //*[@id="mntl-taxonomy-nodes__list_1-0"]
 # The above is the xml path to the list of different dinner genres
 # blank_data = {"link": None, "meal_category": None, "ingredients": None}
-df = pd.DataFrame(columns=["link", "meal-category", "ingredients", "total-time", "servings"])
+df = pd.DataFrame(columns=COLUMNS)
 # Category: Things like breakfast, dinner, side dish, and dessert
 
 
@@ -52,7 +53,7 @@ def get_element_by_xpath(xpath):
 
 # print(ingredients_list)
 
-df = pd.DataFrame(columns=["link", "meal-category", "ingredients", "total-time"])
+df = pd.DataFrame(columns=COLUMNS)
 
 # get_url(TARGET_WEBSITES[0])
 # element = get_element_by_xpath(XPATH_INDEX["ingredients"]) # Returns a dictionary containing a list of data.
