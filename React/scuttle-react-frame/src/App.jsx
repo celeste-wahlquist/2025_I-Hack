@@ -26,6 +26,7 @@ function App() {
         />
         <img src={foodwave} alt="foodwave" id="heroImage" />
       </header>
+        <Pantry hasIngredients={true}/>
     </div>
   );
 }
