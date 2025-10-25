@@ -9,13 +9,22 @@ function Home() {
     function handlePantryClick() {
         const logo = document.querySelector('.scuttleTitle');
         const shelf = document.getElementById('pantryShelf');
-        logo.classList.toggle('fade-out');
         shelf.classList.toggle('fade-out');
+        if (!logo.classList.contains('fade-out')) {
+            logo.classList.toggle('fade-out');
+        } 
+        if (!shelf.classList.contains('fade-out')) {
+            logo.classList.add('fade-out');
+        }
+        else {
+            logo.classList.remove('fade-out');
+        }
     }
-    
     function handleListClick() {
-        const list = document.getElementById('groceryList')
-        list.classList.toggle('fade-out');
+        const logo = document.querySelector('.scuttleTitle');
+        const listContainer = document.getElementById('groceryList');
+
+        listContainer.classList.toggle('fade-out'); 
     }
     
     
@@ -32,9 +41,11 @@ function Home() {
                 </div>
                 <img src={logo} className="scuttleTitle" alt="logo"/>
                 <div className="scuttleTasks">
-                    <ShoppingList />
                     <img src={shelf} alt="shelf" id="pantryShelf" className="fade-out" />
-                    <img src={list} alt="list" id="groceryList" className="fade-out"/>
+                    <div id="groceryList" className="fade-out">
+                        <img src={list} alt="list" id="groceryListImage"/>
+                        <div className="listData"><ShoppingList/></div>
+                    </div>
                 </div>
             </header>
         </div>

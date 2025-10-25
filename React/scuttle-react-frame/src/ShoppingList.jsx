@@ -15,10 +15,6 @@ function ShoppingList(){
     return (
         <div className = "ShoppingList">
             <div>
-                <h2>Shopping List</h2>
-                <hr />
-            </div>
-            <div>
                 <ul>                  
                     {shopList}
                 </ul>
