@@ -5,7 +5,7 @@ import pandas as pd
 from time import sleep
 import openpyxl
 
-TARGET_WEBSITES = ["https://www.allrecipes.com/recipe/270750/simple-baked-potato/"] # "https://www.recipes.com"
+TARGET_WEBSITES = ["https://www.allrecipes.com/recipe/270750/simple-baked-potato/", "https://www.allrecipes.com/scarborough-fair-roasted-vegetables-recipe-11763940"] # "https://www.recipes.com"
 
 # Create the driver for the selenium browser
 driver = webdriver.Chrome()
@@ -13,12 +13,13 @@ driver = webdriver.Chrome()
 # //*[@id="mntl-taxonomy-nodes__list_1-0"]
 # The above is the xml path to the list of different dinner genres
 # blank_data = {"link": None, "meal_category": None, "ingredients": None}
-df = pd.DataFrame(columns=["link", "meal_category", "ingredients"])
+df = pd.DataFrame(columns=["link", "meal-category", "ingredients"])
 # Category: Things like breakfast, dinner, side dish, and dessert
 
 
-
-driver.get(TARGET_WEBSITES[0])
+# Make the get into a reusable function
+def get_url(url):
+    driver.get(url)
 """# Get an element by Xpath, specifically the list of meal types
 # food_types = driver.find_elements(By.XPATH, '//*[@id="mntl-taxonomy-nodes__list_1-0"]')
 # print(food_types)
@@ -30,28 +31,37 @@ driver.get(TARGET_WEBSITES[0])
 # print(food_types_list)
 """
 
-sleep(2)
-ingredients = list(driver.find_elements(By.XPATH, '//*[@id="mm-recipes-structured-ingredients_1-0"]/ul/li'))
+def get_ingredients(xpath):
+    ingredients = list(driver.find_elements(By.XPATH, xpath))
+    ingredients_dict = {"ingredient":[]}
+    for ingredient in ingredients:
+        print(ingredient.text)
+        ingredients_dict["ingredient"].append(ingredient.text)
+    return ingredients_dict
 # print(ingredients)
 
 # print(ingredients[0].tag_name)
-ingredients_dict = {"ingredient":[]}
-for ingredient in ingredients:
-    print(ingredient.text)
-    ingredients_dict["ingredient"].append(ingredient.text)
-# print(ingredients_list)
-temp_df = pd.DataFrame({"link":TARGET_WEBSITES[0], "meal_category":"side-dish", "ingredients":ingredients_dict}) #TODO: Clean up the ingredients list.
 
-print("Here")
-print(temp_df)
+# print(ingredients_list)
+
+df = pd.DataFrame(columns=["link", "meal-category", "ingredients"])
+
+for url in TARGET_WEBSITES:
+    sleep(2)
+    get_url(url)
+    ingredients_dict = get_ingredients('//*[@id="mm-recipes-structured-ingredients_1-0"]/ul/li')
+    temp_df = pd.DataFrame({"link":TARGET_WEBSITES[0], "meal-category":"side-dish", "ingredients":ingredients_dict}) #TODO: Clean up the ingredients list.
+    df = pd.concat([df, temp_df])
+
+print(df)
 with pd.ExcelWriter("./output.xlsx") as writer:
-    temp_df.to_excel(writer)
+    df.to_excel(writer)
 
 # temp_df = pd.DataFrame([{"link":TARGET_WEBSITES[0], "meal_category":"side-dish", "ingredients": "test string"}])
 # df["ingredients"] = zip(ingredients_list)
 # df.loc[(len(df))] = [temp_df]
 # pd.concat([df, temp_df])
-print(df)
+# print(df)
 # This input keeps the page alive
 input()
 driver.quit()
