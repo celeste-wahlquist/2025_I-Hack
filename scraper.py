@@ -3,6 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import pandas as pd
 from time import sleep
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import openpyxl
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -15,7 +17,8 @@ ROW_IDENTIFIER = "row"
 # TODO: Get all needed data {url, name, category, rating, ingredients, prep_time, cook_time, ready_in_time, calories}
 
 # Create the driver for the selenium browser
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+# driver = webdriver.Firefox()
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install())service=Service(ChromeDriverManager().install()))
 
 # TODO: Make dynamic webpage crawling within target websites base url.
 # //*[@id="mntl-taxonomy-nodes__list_1-0"]
