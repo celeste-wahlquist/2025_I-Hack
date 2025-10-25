@@ -1,6 +1,3 @@
-import logo from './logo.svg';
-import './App.css';
-import ShoppingList from './ShoppingList';
 import MealIndiv from './MealIndiv';
 import foodwave from './images/foodwavecropped.png';
 import MealPlan from './MealPlan'
@@ -25,10 +22,12 @@ function App() {
                 allMeals = {mealList}
         />
         <img src={foodwave} alt="foodwave" id="heroImage" />
+         
       </header>
-        <Pantry hasIngredients={true}/>
     </div>
   );
 }
+
+
 
 export default App;
