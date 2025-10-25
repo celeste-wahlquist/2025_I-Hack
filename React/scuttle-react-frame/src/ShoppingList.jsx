@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import ShopItem from './ShopItem'
 // props = list of items to buy with weather they are in pantry or not
 // shop list should come in as name / value
-function ShoppingList(props){
+function ShoppingList(){
     // props.shopList
     const shopItemsSmall = [ {name: "chicken breast", inPantry: "Low"},
                         {name: "tumeric", inPantry: "Yes"},
@@ -11,7 +11,7 @@ function ShoppingList(props){
                         {name: "chives", inPantry: "No"},
 
     ]
-    const shopList = shopItemsSmall.map(item => ShopItem(shopItems))
+    const shopList = shopItemsSmall.map(item => ShopItem(item))
     return (
         <div className = "ShoppingList">
             <div>
@@ -19,8 +19,8 @@ function ShoppingList(props){
                 <hr />
             </div>
             <div>
-                <ul>
-                    <ShopItem wholeList={shopItemsSmall} />
+                <ul>                  
+                    {shopList}
                 </ul>
             </div>
         </div>
