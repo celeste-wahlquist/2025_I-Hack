@@ -10,6 +10,8 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import urllib.parse
+import threading
+from queue import Queue
 
 TARGET_WEBSITES = ["https://www.allrecipes.com/recipe/270750/simple-baked-potato/", "https://www.allrecipes.com/scarborough-fair-roasted-vegetables-recipe-11763940", "https://www.allrecipes.com/cheesy-cauliflower-cakes-recipe-11803145", "https://www.allrecipes.com/4-ingredient-egg-avocado-toast-recipe-11763246"] # "https://www.recipes.com"
 XPATH_INDEX = {"total-time": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[3]/div[2]', "ingredients": '//*[@id="mm-recipes-structured-ingredients_1-0"]/ul/li', "servings": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[4]/div[2]', "meal-category":'//*[@id="mntl-breadcrumbs__item_2-0"]', "cook-time": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[2]/div[2]', "prep-time": '//*[@id="mm-recipes-details_1-0"]/div[1]/div[1]/div[2]'}
@@ -22,7 +24,7 @@ ROW_IDENTIFIER = "row"
 
 # Create the driver for the selenium browser
 # driver = webdriver.Firefox()
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install())service=Service(ChromeDriverManager().install()))
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 # TODO: Make dynamic webpage crawling within target websites base url.
 # //*[@id="mntl-taxonomy-nodes__list_1-0"]
@@ -30,7 +32,6 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install())servic
 # blank_data = {"link": None, "meal_category": None, "ingredients": None}
 df = pd.DataFrame(columns=COLUMNS)
 # Category: Things like breakfast, dinner, side dish, and dessert
-
 
 # Make the get into a reusable function
 def get_url(url):
@@ -80,6 +81,7 @@ def get_target_urls(sitemap_url):
     # print(urls)
     urls_list = []
     for url in urls:
+
         clean_url = str(url.contents)[2:-3] # 2:-3 removes brackets and single quotes.
         parsed = urllib.parse.urlparse(str(clean_url))
         # special_url =f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
@@ -128,29 +130,37 @@ def fill_blank_df_fields(df):
             print(f"{column} has an empty entry")
             df.loc[ROW_IDENTIFIER, column] = [None]
     return df
-
+target_websites = []
 # Full info on meal xpath: //*[@id="mm-recipes-details_1-0"]/div[1]
-target_websites = get_target_urls(SITEMAPS[0])
+for sitemap in SITEMAPS:
+    temp_target_websites = get_target_urls(sitemap)
+    for value in temp_target_websites:
+        target_websites.append(value)
+counter = 1
 # driver.close()
-if (len(target_websites) > 20):
-    target_websites = target_websites[0:20]
-for url in target_websites:
-    # for key in XPATH_INDEX:
-    sleep(2)
-    get_url(url)
-    # for each of the element dictionaries, I need to check if it is empty and fill it with None if empty
-    # Edit the XPATH variables to get a more specific reference.
-    # details_dict = calculate_details('//*[@id="mm-recipes-details_1-0"]/div[1]')
-    ingredients_dict = get_elements_by_xpath(XPATH_INDEX["ingredients"])
-    total_time_dict = get_elements_by_xpath(XPATH_INDEX["total-time"])
-    cook_time_dict = get_elements_by_xpath(XPATH_INDEX["cook-time"])
-    prep_time_dict = get_elements_by_xpath(XPATH_INDEX["prep-time"])
-    serving_dict = get_elements_by_xpath(XPATH_INDEX["servings"])
-    meal_category = get_elements_by_xpath(XPATH_INDEX["meal-category"]) 
-    temp_df = pd.DataFrame({"link":url, "meal-category":meal_category, "ingredients":ingredients_dict, "total-time": total_time_dict, "servings":serving_dict, "cook-time": cook_time_dict, "prep-time": prep_time_dict}) #TODO: Clean up the ingredients list. There is currently a mismatch in columns filled here and the expected columns.
-    temp_df = fill_blank_df_fields(temp_df)
-    df = pd.concat([df, temp_df], ignore_index=True)
-
+# if (len(target_websites) > 20):
+#     target_websites = target_websites[0:20]
+try:
+    for url in target_websites:
+        # for key in XPATH_INDEX:
+        # sleep(2)
+        print("running", counter, "out of", len(target_websites))
+        counter += 1
+        get_url(url)
+        # for each of the element dictionaries, I need to check if it is empty and fill it with None if empty
+        # Edit the XPATH variables to get a more specific reference.
+        # details_dict = calculate_details('//*[@id="mm-recipes-details_1-0"]/div[1]')
+        ingredients_dict = get_elements_by_xpath(XPATH_INDEX["ingredients"])
+        total_time_dict = get_elements_by_xpath(XPATH_INDEX["total-time"])
+        cook_time_dict = get_elements_by_xpath(XPATH_INDEX["cook-time"])
+        prep_time_dict = get_elements_by_xpath(XPATH_INDEX["prep-time"])
+        serving_dict = get_elements_by_xpath(XPATH_INDEX["servings"])
+        meal_category = get_elements_by_xpath(XPATH_INDEX["meal-category"]) 
+        temp_df = pd.DataFrame({"link":url, "meal-category":meal_category, "ingredients":ingredients_dict, "total-time": total_time_dict, "servings":serving_dict, "cook-time": cook_time_dict, "prep-time": prep_time_dict}) #TODO: Clean up the ingredients list. There is currently a mismatch in columns filled here and the expected columns.
+        temp_df = fill_blank_df_fields(temp_df)
+        df = pd.concat([df, temp_df], ignore_index=True)
+except Exception as e:
+    print("You broke out of the loop early. Writing known data to file. The error is:", e)
 # d94427
 # print(df)
 df.to_csv("./output.csv")
