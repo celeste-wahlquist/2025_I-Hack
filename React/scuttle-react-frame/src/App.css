@@ -1,4 +1,35 @@
-.heroImage {
-    width: 100vw;
-    border: 500px solid red;
+
+.App {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: flex-start;
+    background-image: url("./images/foodwavecropped.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    image-rendering: pixelated;
+    background-position: center;
+}
+
+.App-hero {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.navBar {
+    position: relative;
+    top: 0;
+    z-index: 10;
+}
+.navButton {
+    width: 4rem;
+    margin-left: 1rem;
+    color: black;
+}
+
+.scuttleTitle {
+    width: 80rem;
+    margin-left: -15rem;
+    margin-top: -8rem;
 }
