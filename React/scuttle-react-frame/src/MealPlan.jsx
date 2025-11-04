@@ -8,7 +8,7 @@ function MealPlan({day, allMeals})
     const [meals, setMeals] = useState(allMeals);
     const mealTimes = ['B', 'L', 'D'];
 
-    const editMeal = (index) => {
+    const editMeal = (index) => {//Claude AI cleaned this code up to what you see today
         setMeals(prevMeals => {
             const updatedMeals = [...prevMeals];
             updatedMeals[index] = 2;//search();
@@ -19,7 +19,7 @@ function MealPlan({day, allMeals})
     return(
         <div>
             <h2><b>{day}</b></h2>
-            {meals.map((meal, index) => (
+            {meals.map((meal, index) => (//Claude AI also gave me this mapping code.
                 <div key={index}>
                     <MealIndiv
                         timeOfMeal={mealTimes[index]}
