@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import ShopItem from './ShopItem';
-import {createUser, getUser} from './firebase_stuff/Data';
+import {createUser, getUser} from '../firebase_stuff/Data';
 
 
 // props = list of items to buy with weather they are in pantry or not
