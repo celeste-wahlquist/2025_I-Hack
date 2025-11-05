@@ -3,8 +3,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import pandas as pd
 from time import sleep
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 import openpyxl
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -137,7 +135,6 @@ SITEMAPS = ["https://www.allrecipes.com/sitemap_1.xml", "https://www.allrecipes.
 ROW_IDENTIFIER = "row"
 
 # Create the driver for the selenium browser
-# driver = webdriver.Firefox()
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 df = pd.DataFrame(columns=COLUMNS)
@@ -186,10 +183,11 @@ def fill_blank_df_fields(df):
             df.loc[ROW_IDENTIFIER, column] = [None]
     return df
 
-# target_websites = get_target_urls(SITEMAPS[0])
+for sitemap in SITEMAPS:
+    target_websites = get_target_urls(sitemap)
 # driver.close()
-if (len(target_websites) > 20):
-    target_websites = target_websites[0:20]
+# if (len(target_websites) > 20):
+    # target_websites = target_websites[0:20]
 for url in target_websites:
     # sleep(2)  # This rate limits the calls to the server.
     get_url(url)
