@@ -138,7 +138,7 @@ ROW_IDENTIFIER = "row"
 
 # Create the driver for the selenium browser
 # driver = webdriver.Firefox()
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install())service=Service(ChromeDriverManager().install()))
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 df = pd.DataFrame(columns=COLUMNS)
 
