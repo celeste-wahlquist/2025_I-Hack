@@ -1,6 +1,6 @@
 import './Home.css';
 import logo from './images/logo.png';
-import ShoppingList from './ShoppingList';
+import ShoppingList from './components/ShoppingList';
 import shelf from './images/shelf.png';
 import list from './images/groceryList.png'
 

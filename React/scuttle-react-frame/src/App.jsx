@@ -1,6 +1,6 @@
-import MealIndiv from './MealIndiv';
+
 import foodwave from './images/foodwavecropped.png';
-import MealPlan from './MealPlan'
+import MealPlan from './components/MealPlan'
 
 
 function App() {
